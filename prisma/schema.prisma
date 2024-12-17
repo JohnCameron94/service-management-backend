@@ -1,0 +1,171 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+//Model Schema Plan 
+//  1. Company 
+//  2. within a Organization you have employee's
+// 
+// Within Companies you have Clients: 
+// - Clients have locations
+// - Locations have equipment
+// - Locations have a maintenance schedule.
+// - 
+//  3. Within a Company you have clients
+//  4. For Clients you have locations
+//  5. For Locations you have equipment list and a maintenance schedule. 
+//  
+//
+// User Model
+
+model Company {
+  uuid                        String      @id @default(uuid())
+  name                        String?     @db.Text
+  createdAt                   DateTime    @default(now()) @db.Timestamp(0)
+  modifiedAt                  DateTime    @updatedAt() @db.Timestamp(0)
+  changeTag                   BigInt      @default(0)
+  location                    String?     @db.Text
+  phoneNumber                 String?     @db.Text
+  employees                   Employee[]
+  clients                     Client[]
+
+  // Index
+  @@index([uuid])
+  @@map("company")
+}
+
+
+model Client {
+  uuid                        String      @id @default(uuid())
+  name                        String      @db.Text      
+  createdAt                   DateTime    @default(now()) @db.Timestamp(0)
+  modifiedAt                  DateTime    @updatedAt() @db.Timestamp(0)
+  changeTag                   BigInt      @default(0)
+  company_uuid                String
+  company                     Company     @relation(fields: [company_uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "fk_client_company")
+
+
+
+  @@index([uuid])
+  @@map("client")
+}
+
+
+model Device {
+  uuid                  String    @id @default(uuid()) 
+  name                  String?   @db.Text
+  type                  Int       @default(0) // iOS = 0, Android = 1, Web = 1
+  pushToken             String?   @db.Text
+  voipToken             String?   @db.Text
+  production            Boolean   @default(true)
+  appVersion            String?   @default("0") @db.VarChar(24)
+  appBuild              Int?      @default(0)
+  siwaIdentityToken     String?   @db.Text
+  siwaAuthorizationCode String?   @db.Text
+  siwaAccessToken       String?   @db.Text
+  siwaRefreshToken      String?   @db.Text
+  siwaTokenExpiry       DateTime?
+  lastViewedAt          DateTime?
+  createdAt             DateTime  @default(now()) @db.Timestamp(0)
+  modifiedAt            DateTime  @updatedAt @db.Timestamp(0)
+  changeTag             BigInt    @default(0)
+  user_uuid             String   
+
+  @@index([uuid])
+  @@map("device")
+}
+
+
+model Employee {
+  uuid                        String            @id @default(uuid())
+  email                       String            @unique
+  firstname                   String?           @db.Text
+  lastname                    String?           @db.Text
+  phoneNumber                 String?           @db.VarChar(20)
+  idToken                     String?           @db.VarChar(100)
+  authenticationUser          String?           @db.VarChar(100)
+  createdAt                   DateTime          @default(now()) @db.Timestamp(0)
+  modifiedAt                  DateTime          @updatedAt() @db.Timestamp(0)
+  changeTag                   BigInt            @default(0)
+  company_uuid                String
+  user_uuid                   String            @unique
+  qualifications              Qualification[]
+  user                        User              @relation(fields: [user_uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "fk_employee_user")
+  company                     Company           @relation(fields: [company_uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "fk_employee_company")
+
+  @@index([uuid])
+  @@map("employee")
+}
+
+model Qualification{
+  uuid                        String      @id @default(uuid())
+  createdAt                   DateTime    @default(now()) @db.Timestamp(0)
+  modifiedAt                  DateTime    @updatedAt() @db.Timestamp(0)
+  changeTag                   BigInt      @default(0)
+  employee_uuid               String   
+  employee                    Employee    @relation(fields: [employee_uuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "fk_qualification_employee")
+
+  @@index([uuid])
+  @@map("qualification")
+}
+
+
+
+
+model Permission {
+  uuid                        String      @id @default(uuid())
+  createdAt                   DateTime    @default(now()) @db.Timestamp(0)
+  modifiedAt                  DateTime    @updatedAt() @db.Timestamp(0)
+  changeTag                   BigInt      @default(0)
+  user_uuid                   String
+  user                        User        @relation(fields: [user_uuid], references: [uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_permission_user")
+  
+  
+  @@index([uuid])
+  @@map("permission")
+}
+
+model Action {
+  uuid                        String      @id @default(uuid())
+  type                        Int         @db.Int
+  createdAt                   DateTime    @default(now()) @db.Timestamp(0)
+  modifiedAt                  DateTime    @updatedAt() @db.Timestamp(0)
+  changeTag                   BigInt      @default(0)
+}
+
+model Resource { 
+  uuid                        String      @id @default(uuid())
+  type                        Int         @db.Int
+  createdAt                   DateTime    @default(now()) @db.Timestamp(0)
+  modifiedAt                  DateTime    @updatedAt() @db.Timestamp(0)
+  changeTag                   BigInt      @default(0)
+}
+
+model User {
+    uuid                        String      @id @default(uuid())
+    idToken                     String?     @db.VarChar(100)
+    authenticationUser          String?     @db.VarChar(100)
+    createdAt                   DateTime    @default(now()) @db.Timestamp(0)
+    modifiedAt                  DateTime    @updatedAt() @db.Timestamp(0)
+    changeTag                   BigInt      @default(0)
+    employee_uuid               String?
+
+    employee                    Employee?
+    permissions                 Permission[]    
+
+    // Index
+    @@index([uuid])
+    @@map("user")
+}
+
+
+

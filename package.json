@@ -1,0 +1,34 @@
+{
+  "name": "service-management-backend",
+  "version": "1.0.0",
+  "description": "Service Management App backend",
+  "main": "index.js",
+  "scripts": {
+    "app": "nodemon src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohnCameron94/service-management-backend.git"
+  },
+  "author": "jcameron",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JohnCameron94/service-management-backend/issues"
+  },
+  "homepage": "https://github.com/JohnCameron94/service-management-backend#readme",
+  "dependencies": {
+    "@prisma/client": "^6.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "prisma": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.2",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

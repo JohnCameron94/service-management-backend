@@ -1,6 +1,6 @@
 // src/index.ts
 import express, { Express, Request, Response } from "express";
-import userRouter from "./routes/user.routes";
+import userRouter from "./routes/user/user.routes";
 import loggerMiddleware from "./middlewares/logger";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/errorHandler";

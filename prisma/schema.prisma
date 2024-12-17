@@ -91,8 +91,6 @@ model Employee {
   firstname                   String?           @db.Text
   lastname                    String?           @db.Text
   phoneNumber                 String?           @db.VarChar(20)
-  idToken                     String?           @db.VarChar(100)
-  authenticationUser          String?           @db.VarChar(100)
   createdAt                   DateTime          @default(now()) @db.Timestamp(0)
   modifiedAt                  DateTime          @updatedAt() @db.Timestamp(0)
   changeTag                   BigInt            @default(0)
